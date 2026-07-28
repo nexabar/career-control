@@ -7,319 +7,287 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #121212);
-            color: var(--tg-theme-text-color, #ffffff);
-            margin: 0;
-            padding: 15px;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #ff9800;
-        }
-
-        .tabs {
+            font-size: 20px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: var(--text-color);
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            background-color: #2a2a2a;
-            color: #aaa;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .tab-btn.active {
-            background-color: #ff9800;
-            color: #000;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
-        .tab-content {
-            display: none;
+        .stat-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
         }
 
-        .tab-content.active {
-            display: block;
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-top: 4px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         select, input, textarea {
             width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background-color: #1e1e1e;
-            color: #fff;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        .status-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            background: #1e1e1e;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .status-select {
-            width: auto;
-            padding: 5px 10px;
-        }
-
-        .card {
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #2a2a2a;
-        }
-
-        .progress-container {
-            width: 100%;
-            background-color: #333;
-            border-radius: 10px;
-            height: 20px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #ff9800, #4caf50);
-            width: 0%;
-            transition: width 0.5s ease-in-out;
-        }
-
-        .stats-summary {
-            display: flex;
-            justify-content: space-between;
+            color: var(--text-color);
             font-size: 14px;
-            margin-top: 8px;
-            color: #ccc;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        .chart-box {
-            position: relative;
-            height: 220px;
-            width: 100%;
+        select:focus, input:focus, textarea:focus {
+            border-color: var(--accent-color);
         }
 
-        .submit-btn {
+        .eq-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .eq-select {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn {
             width: 100%;
-            padding: 14px;
-            background-color: #ff9800;
-            color: #000;
+            background-color: var(--accent-color);
+            color: white;
             border: none;
             border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 15px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 180px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <h2>🚜 Карьер Контроль</h2>
+    <div class="container">
+        <h2>🚜 Карьер Контроль</h2>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('form')">📝 Сдать смену</button>
-        <button class="tab-btn" onclick="switchTab('analytics')">📊 Аналитика</button>
-    </div>
-
-    <!-- ВКЛАДКА 1 -->
-    <div id="tab-form" class="tab-content active">
-        <div class="form-group">
-            <label for="shift">Выберите смену:</label>
-            <select id="shift">
-                <option value="1">Дневная смена (08:00 - 20:00)</option>
-                <option value="2">Ночная смена (20:00 - 08:00)</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="volume">Объем добычи (тонн):</label>
-            <input type="number" id="volume" placeholder="Например: 1200" required>
-        </div>
-
-        <h3>Состояние техники</h3>
-        <div class="status-group">
-            <span>🚛 БелАЗ #1</span>
-            <select id="belaz" class="status-select">
-                <option value="Исправен">🟢 Исправен</option>
-                <option value="В ремонте">🔴 В ремонте</option>
-                <option value="ТО">🟡 На ТО</option>
-            </select>
-        </div>
-
-        <div class="status-group">
-            <span>🚜 Экскаватор CAT</span>
-            <select id="cat" class="status-select">
-                <option value="Исправен">🟢 Исправен</option>
-                <option value="В ремонте">🔴 В ремонте</option>
-                <option value="ТО">🟡 На ТО</option>
-            </select>
-        </div>
-
-        <div class="status-group">
-            <span>🏗 Бульдозер Komatsu</span>
-            <select id="komatsu" class="status-select">
-                <option value="Исправен">🟢 Исправен</option>
-                <option value="В ремонте">🔴 В ремонте</option>
-                <option value="ТО">🟡 На ТО</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="comment">Комментарии / Замечания:</label>
-            <textarea id="comment" rows="3" placeholder="Опишите простои или поломки..."></textarea>
-        </div>
-
-        <button class="submit-btn" onclick="sendReportData()">ОТПРАВИТЬ ОТЧЁТ</button>
-    </div>
-
-    <!-- ВКЛАДКА 2 -->
-    <div id="tab-analytics" class="tab-content">
-        <div class="card">
-            <label>📊 План добычи на месяц:</label>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">Всего добыто</div>
+                <div class="stat-value" id="totalVolumeStat">0 т</div>
             </div>
-            <div class="stats-summary">
-                <span>Загрузка данных...</span>
+            <div class="stat-box">
+                <div class="stat-label">Статус смены</div>
+                <div class="stat-value" style="font-size: 16px; color: var(--success); margin-top: 8px;">Активна</div>
             </div>
         </div>
 
+        <!-- График -->
         <div class="card">
-            <label>📈 Динамика добычи (тонны):</label>
-            <div class="chart-box">
+            <label>Динамика добычи</label>
+            <div class="chart-container">
                 <canvas id="productionChart"></canvas>
             </div>
+        </div>
+
+        <!-- Форма отчета -->
+        <div class="card">
+            <label>Номер смены</label>
+            <select id="shift">
+                <option value="1">Смена №1 (Дневная)</option>
+                <option value="2">Смена №2 (Ночная)</option>
+            </select>
+
+            <label>Объем добычи (тонн)</label>
+            <input type="number" id="volume" placeholder="Например: 1500" value="1200">
+
+            <label>Состояние техники</label>
+            
+            <div class="eq-group">
+                <span style="align-self: center; font-size: 13px; width: 80px;">БелАЗ</span>
+                <select id="belaz" class="eq-select">
+                    <option value="Исправен">Исправен</option>
+                    <option value="Ремонт">Ремонт</option>
+                </select>
+            </div>
+
+            <div class="eq-group">
+                <span style="align-self: center; font-size: 13px; width: 80px;">CAT</span>
+                <select id="cat" class="eq-select">
+                    <option value="Исправен">Исправен</option>
+                    <option value="Ремонт">Ремонт</option>
+                </select>
+            </div>
+
+            <div class="eq-group">
+                <span style="align-self: center; font-size: 13px; width: 80px;">Komatsu</span>
+                <select id="komatsu" class="eq-select">
+                    <option value="Исправен">Исправен</option>
+                    <option value="Ремонт">Ремонт</option>
+                </select>
+            </div>
+
+            <label style="margin-top: 12px;">Комментарий</label>
+            <textarea id="comment" rows="2" placeholder="Особенности смены, замечания..."></textarea>
+
+            <button class="btn" id="submitBtn">Отправить отчёт</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
         tg.expand();
 
+        // Получаем параметры из URL (общий объем)
         const urlParams = new URLSearchParams(window.location.search);
-        const realTotalVolume = parseInt(urlParams.get('total')) || 0;
-        const monthGoal = 20000;
+        const totalVol = urlParams.get('total') || '0';
+        document.getElementById('totalVolumeStat').innerText = Number(totalVol).toLocaleString() + ' т';
 
-        let dynamicChartData = [0, 0, 0, 0, 0, 0, realTotalVolume];
-        try {
-            const chartParam = urlParams.get('chart');
-            if (chartParam) {
-                dynamicChartData = JSON.parse(chartParam);
+        // Инициализация графика в синих тонах
+        const ctx = document.getElementById('productionChart').getContext('2d');
+        const productionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                datasets: [{
+                    label: 'Добыча (т)',
+                    data: [1100, 1250, 980, 1400, 1350, 1500, Number(totalVol) || 1200],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { size: 11 } }
+                    },
+                    y: {
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8', font: { size: 11 } }
+                    }
+                }
             }
-        } catch (e) {
-            console.error("Ошибка парсинга графика:", e);
-        }
+        });
 
-        function updateDashboard() {
-            const percent = Math.min(Math.round((realTotalVolume / monthGoal) * 100), 100);
-            document.getElementById('progressBar').style.width = percent + '%';
-            document.querySelector('.stats-summary').innerHTML = `
-                <span>Добыто: <b>${realTotalVolume.toLocaleString('ru-RU')} т</b></span>
-                <span>План: <b>${monthGoal.toLocaleString('ru-RU')} т (${percent}%)</b></span>
-            `;
-        }
-
-        updateDashboard();
-
-        function sendReportData() {
-            const volumeVal = document.getElementById("volume").value.trim();
-
-            if (!volumeVal || isNaN(volumeVal) || parseInt(volumeVal) <= 0) {
-                tg.showAlert("Введите число в поле объема добычи!");
+        // Отправка данных в бота
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const shift = document.getElementById('shift').value;
+            const volume = document.getElementById('volume').value;
+            
+            if (!volume || volume <= 0) {
+                alert('Пожалуйста, введите корректный объем добычи!');
                 return;
             }
 
             const data = {
                 action: "submit_report",
-                shift: document.getElementById("shift").value,
-                volume: volumeVal,
+                shift: shift,
+                volume: volume,
                 equipment: {
-                    belaz: document.getElementById("belaz").value,
-                    cat: document.getElementById("cat").value,
-                    komatsu: document.getElementById("komatsu").value
+                    belaz: document.getElementById('belaz').value,
+                    cat: document.getElementById('cat').value,
+                    komatsu: document.getElementById('komatsu').value
                 },
-                comment: document.getElementById("comment").value,
-                timestamp: new Date().toLocaleString("ru-RU")
+                comment: document.getElementById('comment').value,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
 
             tg.sendData(JSON.stringify(data));
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-            if (tabName === 'form') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('tab-form').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tab-analytics').classList.add('active');
-                renderChart();
-            }
-        }
-
-        let chartInstance = null;
-        function renderChart() {
-            if (chartInstance) return;
-
-            const ctx = document.getElementById('productionChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['1', '2', '3', '4', '5', '6', 'Последний'],
-                    datasets: [{
-                        label: 'Добыча (тонн)',
-                        data: dynamicChartData,
-                        borderColor: '#ff9800',
-                        backgroundColor: 'rgba(255, 152, 0, 0.2)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#aaa' }, grid: { color: '#333' } },
-                        y: { ticks: { color: '#aaa' }, grid: { color: '#333' } }
-                    }
-                }
-            });
-        }
+            tg.close();
+        });
     </script>
 </body>
 </html>
