@@ -127,19 +127,31 @@
             height: 220px;
             width: 100%;
         }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #ff9800;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
 
     <h2>🚜 Карьер Контроль</h2>
 
-    <!-- Вкладки -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('form')">📝 Сдать смену</button>
         <button class="tab-btn" onclick="switchTab('analytics')">📊 Аналитика</button>
     </div>
 
-    <!-- ВКЛАДКА 1: Форма сдачи смены -->
+    <!-- ВКЛАДКА 1 -->
     <div id="tab-form" class="tab-content active">
         <div class="form-group">
             <label for="shift">Выберите смену:</label>
@@ -186,9 +198,12 @@
             <label for="comment">Комментарии / Замечания:</label>
             <textarea id="comment" rows="3" placeholder="Опишите простои или поломки..."></textarea>
         </div>
+
+        <!-- Кнопка дублер прямо внутри страницы -->
+        <button class="submit-btn" onclick="sendReportData()">ОТПРАВИТЬ ОТЧЁТ</button>
     </div>
 
-    <!-- ВКЛАДКА 2: Дашборд и Аналитика -->
+    <!-- ВКЛАДКА 2 -->
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <label>📊 План добычи на месяц:</label>
@@ -213,7 +228,6 @@
         tg.ready();
         tg.expand();
 
-        // Считываем реальный объем из URL параметров
         const urlParams = new URLSearchParams(window.location.search);
         const realTotalVolume = parseInt(urlParams.get('total')) || 0;
         const monthGoal = 20000;
@@ -229,19 +243,12 @@
 
         updateDashboard();
 
-        // Настройка кнопки
-        tg.MainButton.setText("ОТПРАВИТЬ ОТЧЁТ");
-        tg.MainButton.setTextColor("#000000");
-        tg.MainButton.setColor("#ff9800");
-        tg.MainButton.show();
-
-        // Главная функция отправки данных
+        // Отправка отчета
         function sendReportData() {
-            const volumeInput = document.getElementById("volume");
-            const volumeVal = volumeInput ? volumeInput.value.trim() : "";
+            const volumeVal = document.getElementById("volume").value.trim();
 
             if (!volumeVal || isNaN(volumeVal) || parseInt(volumeVal) <= 0) {
-                tg.showAlert("Пожалуйста, введите корректный объем добычи!");
+                tg.showAlert("Введите число в поле объема добычи!");
                 return;
             }
 
@@ -261,10 +268,6 @@
             tg.sendData(JSON.stringify(data));
         }
 
-        // Привязываем клик к кнопке Telegram
-        tg.onEvent('mainButtonClicked', sendReportData);
-
-        // Переключение вкладок
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -272,16 +275,13 @@
             if (tabName === 'form') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tab-form').classList.add('active');
-                tg.MainButton.show();
             } else {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 document.getElementById('tab-analytics').classList.add('active');
-                tg.MainButton.hide();
                 renderChart();
             }
         }
 
-        // Инициализация Chart.js
         let chartInstance = null;
         function renderChart() {
             if (chartInstance) return;
@@ -304,9 +304,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: { ticks: { color: '#aaa' }, grid: { color: '#333' } },
                         y: { ticks: { color: '#aaa' }, grid: { color: '#333' } }
