@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Карьер Контроль</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключаем Chart.js для красивых графиков -->
+    <!-- Подключаем Chart.js для графиков -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -114,7 +114,7 @@
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #ff9800, #4caf50);
-            width: 71%; /* Динамический % выполнения */
+            width: 0%;
             transition: width 0.5s ease-in-out;
         }
 
@@ -198,17 +198,16 @@
         <div class="card">
             <label>📊 План добычи на месяц:</label>
             <div class="progress-container">
-                <div class="progress-bar" id="progressBar" style="width: 71%;"></div>
+                <div class="progress-bar" id="progressBar"></div>
             </div>
             <div class="stats-summary">
-                <span>Добыто: <b>14,200 т</b></span>
-                <span>План: <b>20,000 т (71%)</b></span>
+                <span>Загрузка данных...</span>
             </div>
         </div>
 
         <!-- Интерактивный График -->
         <div class="card">
-            <label>📈 Динамика добычи за неделю (тонны):</label>
+            <label>📈 Динамика добычи (тонны):</label>
             <div class="chart-box">
                 <canvas id="productionChart"></canvas>
             </div>
@@ -218,6 +217,24 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Считываем реальный объем из URL параметров
+        const urlParams = new URLSearchParams(window.location.search);
+        const realTotalVolume = parseInt(urlParams.get('total')) || 0;
+        const monthGoal = 20000; // План на месяц
+
+        // Обновляем статистику и прогресс-бар при загрузке
+        function updateDashboard() {
+            const percent = Math.min(Math.round((realTotalVolume / monthGoal) * 100), 100);
+            
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.querySelector('.stats-summary').innerHTML = `
+                <span>Добыто: <b>${realTotalVolume.toLocaleString('ru-RU')} т</b></span>
+                <span>План: <b>${monthGoal.toLocaleString('ru-RU')} т (${percent}%)</b></span>
+            `;
+        }
+
+        updateDashboard();
 
         // Кнопка внизу Telegram Mini App
         tg.MainButton.setText("ОТПРАВИТЬ ОТЧЁТ");
@@ -233,28 +250,28 @@
             if (tabName === 'form') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tab-form').classList.add('active');
-                tg.MainButton.show(); // Показываем кнопку только на вкладке формы
+                tg.MainButton.show();
             } else {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
                 document.getElementById('tab-analytics').classList.add('active');
-                tg.MainButton.hide(); // На вкладке аналитики скрываем кнопку отправки
-                renderChart(); // Рендерим график
+                tg.MainButton.hide();
+                renderChart();
             }
         }
 
-        // Инициализация Chart.js для графика
+        // Инициализация Chart.js
         let chartInstance = null;
         function renderChart() {
-            if (chartInstance) return; // Чтобы не пересоздавать повторно
+            if (chartInstance) return;
 
             const ctx = document.getElementById('productionChart').getContext('2d');
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Сегодня'],
                     datasets: [{
                         label: 'Добыча (тонн)',
-                        data: [1800, 2100, 1950, 2300, 2000, 2400, 1650],
+                        data: [1800, 2100, 1950, 2300, 2000, 2400, realTotalVolume],
                         borderColor: '#ff9800',
                         backgroundColor: 'rgba(255, 152, 0, 0.2)',
                         borderWidth: 2,
