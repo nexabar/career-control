@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Карьер Контроль</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Подключаем Chart.js для графиков -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -23,7 +22,6 @@
             color: #ff9800;
         }
 
-        /* Навигация по вкладкам */
         .tabs {
             display: flex;
             gap: 10px;
@@ -55,7 +53,6 @@
             display: block;
         }
 
-        /* Стили формы */
         .form-group {
             margin-bottom: 15px;
         }
@@ -93,7 +90,6 @@
             padding: 5px 10px;
         }
 
-        /* Дашборд и Аналитика */
         .card {
             background: #1e1e1e;
             padding: 15px;
@@ -194,7 +190,6 @@
 
     <!-- ВКЛАДКА 2: Дашборд и Аналитика -->
     <div id="tab-analytics" class="tab-content">
-        <!-- Визуальный Прогресс-бар -->
         <div class="card">
             <label>📊 План добычи на месяц:</label>
             <div class="progress-container">
@@ -205,7 +200,6 @@
             </div>
         </div>
 
-        <!-- Интерактивный График -->
         <div class="card">
             <label>📈 Динамика добычи (тонны):</label>
             <div class="chart-box">
@@ -216,17 +210,16 @@
 
     <script>
         const tg = window.Telegram.WebApp;
+        tg.ready();
         tg.expand();
 
         // Считываем реальный объем из URL параметров
         const urlParams = new URLSearchParams(window.location.search);
         const realTotalVolume = parseInt(urlParams.get('total')) || 0;
-        const monthGoal = 20000; // План на месяц
+        const monthGoal = 20000;
 
-        // Обновляем статистику и прогресс-бар при загрузке
         function updateDashboard() {
             const percent = Math.min(Math.round((realTotalVolume / monthGoal) * 100), 100);
-            
             document.getElementById('progressBar').style.width = percent + '%';
             document.querySelector('.stats-summary').innerHTML = `
                 <span>Добыто: <b>${realTotalVolume.toLocaleString('ru-RU')} т</b></span>
@@ -236,11 +229,40 @@
 
         updateDashboard();
 
-        // Кнопка внизу Telegram Mini App
+        // Настройка кнопки
         tg.MainButton.setText("ОТПРАВИТЬ ОТЧЁТ");
         tg.MainButton.setTextColor("#000000");
         tg.MainButton.setColor("#ff9800");
         tg.MainButton.show();
+
+        // Главная функция отправки данных
+        function sendReportData() {
+            const volumeInput = document.getElementById("volume");
+            const volumeVal = volumeInput ? volumeInput.value.trim() : "";
+
+            if (!volumeVal || isNaN(volumeVal) || parseInt(volumeVal) <= 0) {
+                tg.showAlert("Пожалуйста, введите корректный объем добычи!");
+                return;
+            }
+
+            const data = {
+                action: "submit_report",
+                shift: document.getElementById("shift").value,
+                volume: volumeVal,
+                equipment: {
+                    belaz: document.getElementById("belaz").value,
+                    cat: document.getElementById("cat").value,
+                    komatsu: document.getElementById("komatsu").value
+                },
+                comment: document.getElementById("comment").value,
+                timestamp: new Date().toLocaleString("ru-RU")
+            };
+
+            tg.sendData(JSON.stringify(data));
+        }
+
+        // Привязываем клик к кнопке Telegram
+        tg.onEvent('mainButtonClicked', sendReportData);
 
         // Переключение вкладок
         function switchTab(tabName) {
@@ -292,32 +314,6 @@
                 }
             });
         }
-
-        // Обработка клика по Главной кнопке Telegram
-        tg.MainButton.onClick(function () {
-            const shift = document.getElementById("shift").value;
-            const volume = document.getElementById("volume").value;
-
-            if (!volume) {
-                tg.showAlert("Пожалуйста, укажите объем добычи!");
-                return;
-            }
-
-            const data = {
-                action: "submit_report",
-                shift: shift,
-                volume: volume,
-                equipment: {
-                    belaz: document.getElementById("belaz").value,
-                    cat: document.getElementById("cat").value,
-                    komatsu: document.getElementById("komatsu").value
-                },
-                comment: document.getElementById("comment").value,
-                timestamp: new Date().toLocaleString("ru-RU")
-            };
-
-            tg.sendData(JSON.stringify(data));
-        });
     </script>
 </body>
 </html>
