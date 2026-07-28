@@ -199,7 +199,6 @@
             <textarea id="comment" rows="3" placeholder="Опишите простои или поломки..."></textarea>
         </div>
 
-        <!-- Кнопка дублер прямо внутри страницы -->
         <button class="submit-btn" onclick="sendReportData()">ОТПРАВИТЬ ОТЧЁТ</button>
     </div>
 
@@ -232,6 +231,16 @@
         const realTotalVolume = parseInt(urlParams.get('total')) || 0;
         const monthGoal = 20000;
 
+        let dynamicChartData = [0, 0, 0, 0, 0, 0, realTotalVolume];
+        try {
+            const chartParam = urlParams.get('chart');
+            if (chartParam) {
+                dynamicChartData = JSON.parse(chartParam);
+            }
+        } catch (e) {
+            console.error("Ошибка парсинга графика:", e);
+        }
+
         function updateDashboard() {
             const percent = Math.min(Math.round((realTotalVolume / monthGoal) * 100), 100);
             document.getElementById('progressBar').style.width = percent + '%';
@@ -243,7 +252,6 @@
 
         updateDashboard();
 
-        // Отправка отчета
         function sendReportData() {
             const volumeVal = document.getElementById("volume").value.trim();
 
@@ -290,10 +298,10 @@
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Сегодня'],
+                    labels: ['1', '2', '3', '4', '5', '6', 'Последний'],
                     datasets: [{
                         label: 'Добыча (тонн)',
-                        data: [1800, 2100, 1950, 2300, 2000, 2400, realTotalVolume],
+                        data: dynamicChartData,
                         borderColor: '#ff9800',
                         backgroundColor: 'rgba(255, 152, 0, 0.2)',
                         borderWidth: 2,
