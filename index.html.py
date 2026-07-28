@@ -1,0 +1,294 @@
+html_content = """<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Карьер Контроль</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-amber: #f59e0b;
+            --accent-purple: #a855f7;
+            --button-bg: #2563eb;
+            --button-hover: #1d4ed8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+        }
+
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .header-title p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--accent-green);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-sub {
+            font-size: 11px;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .equipment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .eq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .eq-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .eq-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .eq-type {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .eq-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .status-maint {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+        }
+
+        .action-btn {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: background 0.2s;
+        }
+
+        .action-btn:active {
+            background: var(--button-hover);
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title">
+            <h1>Карьер Контроль</h1>
+            <p id="userName">Панель управления объектом</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span> Смена 1
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">Добыча за смену</div>
+            <div class="card-value">1,420 т</div>
+            <div class="card-sub">▲ +12% к норме</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Техника в работе</div>
+            <div class="card-value">8 / 10</div>
+            <div class="card-sub" style="color: var(--accent-amber)">● 2 на ТО</div>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span>Активная техника</span>
+        <span style="font-size: 12px; color: var(--accent-blue);">Всего 10 ед.</span>
+    </div>
+
+    <div class="equipment-list">
+        <div class="eq-item">
+            <div class="eq-info">
+                <span class="eq-name">Самосвал BelAZ #102</span>
+                <span class="eq-type">Грузоподъемность: 45т • Водитель: Иванов В.</span>
+            </div>
+            <span class="eq-status status-active">На рейсе</span>
+        </div>
+        <div class="eq-item">
+            <div class="eq-info">
+                <span class="eq-name">Экскаватор CAT 349</span>
+                <span class="eq-type">Забой №3 • Оператор: Петров А.</span>
+            </div>
+            <span class="eq-status status-active">Погрузка</span>
+        </div>
+        <div class="eq-item">
+            <div class="eq-info">
+                <span class="eq-name">Бульдозер Komatsu D375</span>
+                <span class="eq-type">Отвал №2</span>
+            </div>
+            <span class="eq-status status-maint">Плановое ТО</span>
+        </div>
+    </div>
+
+    <button class="action-btn" onclick="sendDataToBot()">
+        📝 Отправить отчет в чат
+    </button>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            tg.ready();
+            if (tg.initDataUnsafe?.user) {
+                document.getElementById('userName').textContent = 
+                    `Оператор: ${tg.initDataUnsafe.user.first_name || 'Смена'}`;
+            }
+        }
+
+        function sendDataToBot() {
+            if (tg) {
+                tg.sendData(JSON.stringify({
+                    action: "report_request",
+                    timestamp: new Date().toISOString()
+                }));
+            } else {
+                alert("Отчет сформирован: 1,420т добычи.");
+            }
+        }
+    </script>
+</body>
+</html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Файл index.html успешно создан!")
