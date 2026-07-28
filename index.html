@@ -39,9 +39,9 @@
         }
 
         h2 {
-            font-size: 20px;
+            font-size: 22px;
             margin-bottom: 16px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-color);
             display: flex;
             align-items: center;
@@ -51,10 +51,10 @@
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 18px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
         }
 
         .stats-grid {
@@ -67,20 +67,20 @@
         .stat-box {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px;
+            border-radius: 14px;
+            padding: 16px;
             text-align: center;
         }
 
         .stat-value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--accent-color);
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
@@ -96,11 +96,11 @@
             width: 100%;
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 12px;
             color: var(--text-color);
-            font-size: 14px;
-            margin-bottom: 12px;
+            font-size: 15px;
+            margin-bottom: 14px;
             outline: none;
             transition: border-color 0.2s;
         }
@@ -109,15 +109,26 @@
             border-color: var(--accent-color);
         }
 
-        .eq-group {
+        .eq-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
 
-        .eq-select {
-            flex: 1;
+        .eq-row span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .eq-row select {
+            width: 140px;
             margin-bottom: 0;
+            padding: 8px;
         }
 
         .btn {
@@ -125,9 +136,9 @@
             background-color: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 14px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
@@ -143,7 +154,7 @@
 
         .chart-container {
             position: relative;
-            height: 180px;
+            height: 190px;
             width: 100%;
         }
     </style>
@@ -161,19 +172,19 @@
             </div>
             <div class="stat-box">
                 <div class="stat-label">Статус смены</div>
-                <div class="stat-value" style="font-size: 16px; color: var(--success); margin-top: 8px;">Активна</div>
+                <div class="stat-value" style="font-size: 16px; color: var(--success); margin-top: 10px;">Активна</div>
             </div>
         </div>
 
         <!-- График -->
         <div class="card">
-            <label>Динамика добычи</label>
+            <label>Динамика добычи по дням</label>
             <div class="chart-container">
                 <canvas id="productionChart"></canvas>
             </div>
         </div>
 
-        <!-- Форма отчета -->
+        <!-- Форма отправки отчета -->
         <div class="card">
             <label>Номер смены</label>
             <select id="shift">
@@ -182,36 +193,36 @@
             </select>
 
             <label>Объем добычи (тонн)</label>
-            <input type="number" id="volume" placeholder="Например: 1500" value="1200">
+            <input type="number" id="volume" placeholder="Введите объем добычи в тоннах">
 
             <label>Состояние техники</label>
             
-            <div class="eq-group">
-                <span style="align-self: center; font-size: 13px; width: 80px;">БелАЗ</span>
-                <select id="belaz" class="eq-select">
+            <div class="eq-row">
+                <span>БелАЗ</span>
+                <select id="belaz">
                     <option value="Исправен">Исправен</option>
                     <option value="Ремонт">Ремонт</option>
                 </select>
             </div>
 
-            <div class="eq-group">
-                <span style="align-self: center; font-size: 13px; width: 80px;">CAT</span>
-                <select id="cat" class="eq-select">
+            <div class="eq-row">
+                <span>CAT</span>
+                <select id="cat">
                     <option value="Исправен">Исправен</option>
                     <option value="Ремонт">Ремонт</option>
                 </select>
             </div>
 
-            <div class="eq-group">
-                <span style="align-self: center; font-size: 13px; width: 80px;">Komatsu</span>
-                <select id="komatsu" class="eq-select">
+            <div class="eq-row">
+                <span>Komatsu</span>
+                <select id="komatsu">
                     <option value="Исправен">Исправен</option>
                     <option value="Ремонт">Ремонт</option>
                 </select>
             </div>
 
-            <label style="margin-top: 12px;">Комментарий</label>
-            <textarea id="comment" rows="2" placeholder="Особенности смены, замечания..."></textarea>
+            <label style="margin-top: 10px;">Комментарий</label>
+            <textarea id="comment" rows="2" placeholder="Дополнительные примечания по смене..."></textarea>
 
             <button class="btn" id="submitBtn">Отправить отчёт</button>
         </div>
@@ -221,7 +232,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Получаем параметры из URL (общий объем)
+        // Считываем общую добычу из URL
         const urlParams = new URLSearchParams(window.location.search);
         const totalVol = urlParams.get('total') || '0';
         document.getElementById('totalVolumeStat').innerText = Number(totalVol).toLocaleString() + ' т';
@@ -234,13 +245,14 @@
                 labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
                 datasets: [{
                     label: 'Добыча (т)',
-                    data: [1100, 1250, 980, 1400, 1350, 1500, Number(totalVol) || 1200],
+                    data: [1150, 1300, 1050, 1420, 1380, 1550, Number(totalVol) || 1250],
                     borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 2,
+                    backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                    borderWidth: 2.5,
                     fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: '#3b82f6'
+                    tension: 0.35,
+                    pointBackgroundColor: '#3b82f6',
+                    pointRadius: 4
                 }]
             },
             options: {
@@ -252,23 +264,23 @@
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#94a3b8', font: { size: 11 } }
+                        ticks: { color: '#94a3b8', font: { size: 12 } }
                     },
                     y: {
-                        grid: { color: '#334155' },
-                        ticks: { color: '#94a3b8', font: { size: 11 } }
+                        grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                        ticks: { color: '#94a3b8', font: { size: 12 } }
                     }
                 }
             }
         });
 
-        // Отправка данных в бота
+        // Обработка клика отправки отчета
         document.getElementById('submitBtn').addEventListener('click', function() {
             const shift = document.getElementById('shift').value;
             const volume = document.getElementById('volume').value;
             
             if (!volume || volume <= 0) {
-                alert('Пожалуйста, введите корректный объем добычи!');
+                alert('Пожалуйста, введите объем добычи!');
                 return;
             }
 
